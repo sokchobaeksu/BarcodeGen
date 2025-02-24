@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모던 바코드 생성기</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">바코드 생성기</h1>
+        <input type="text" id="barcodeInput" class="border p-2 w-full rounded mb-4" placeholder="바코드 입력">
+        <button onclick="generateBarcode()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            바코드 생성
+        </button>
+
+        <!-- 바코드를 중앙에 정렬하는 컨테이너 -->
+        <div id="barcodeContainer" class="hidden flex justify-center items-center mt-4">
+            <svg id="barcode"></svg>
+        </div>
+
+        <button onclick="downloadBarcode()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            이미지 다운로드
+        </button>
+    </div>
+
+    <script>
+        function generateBarcode() {
+            const input = document.getElementById("barcodeInput").value;
+            const barcodeContainer = document.getElementById("barcodeContainer");
+
+            if (input) {
+                JsBarcode("#barcode", input, {
+                    format: "CODE128",
+                    displayValue: true,
+                    lineColor: "#333",
+                    width: 2,
+                    height: 100,
+                    fontSize: 16
+                });
+
+                // 바코드를 중앙에 정렬
+                barcodeContainer.classList.remove("hidden");
+                barcodeContainer.classList.add("flex", "justify-center", "items-center", "mt-4");
+            }
+        }
+
+        function downloadBarcode() {
+            const svg = document.getElementById("barcode");
+            const serializer = new XMLSerializer();
+            const svgBlob = new Blob([serializer.serializeToString(svg)], { type: "image/svg+xml" });
+            const url = URL.createObjectURL(svgBlob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "barcode.svg";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
+
+
